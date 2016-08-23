@@ -57,7 +57,6 @@ First, grab your personal ``APP_TOKEN`` found in [your account settings](https:/
 After that, you'll authenticate the client and start exporting data from your account.
 
 ```php
-
 include("hubstaff.php");
 
 $app_token = "< your hubstaff app token >";
@@ -70,12 +69,15 @@ $hubstaff->auth(email,password);
 
 $auth_token = $hubstaff->get_auth_token();
 
+//=>
+"< hubstaff auth_token >"
 ```
 ### You can list all users for a specific account, and get the details about the organization, and the projects they've worked on.
 
 ```php
 $hubstaff->users(1,1,0);
 
+//=>
 {
   "users": [
     {
@@ -115,6 +117,7 @@ $hubstaff->users(1,1,0);
 ```php
 $hubstaff->find_user(61188);
 
+//=>
 {
   "user": {
     "id": 61188,
@@ -130,6 +133,7 @@ $hubstaff->find_user(61188);
 ```php
 $hubstaff->projects();
 
+//=>
 {
   "projects": [
     {
@@ -154,9 +158,9 @@ $hubstaff->projects();
 ### Retrieve screenshots for a specific project, within a specific timeframe.
 
 ```php
-
 $hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
 
+//=>
 {
   "screenshots": [
     {
@@ -200,5 +204,4 @@ $hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
     }
   ]
 }
-
 ```
