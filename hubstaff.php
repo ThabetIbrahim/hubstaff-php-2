@@ -26,7 +26,7 @@
 				{
 					return $auth_token["error"];
 				}
-				return $auth_token["auth_token"];
+				set_auth_token($auth_token["auth_token"]);
 			}
 			public function users($organization_memberships = 0, $project_memberships = 0, $offset = 0)
 			{
