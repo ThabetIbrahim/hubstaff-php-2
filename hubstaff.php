@@ -21,11 +21,6 @@
 			public function auth($email, $password)
 			{
 				$auth = new Client\userauth;
-				if(!is_dir(ROOT_FOLDER."store"))
-				{
-					$auth_token["error"] = "Please create the store directory with 777 permission";
-					return $auth_token;
-				}
 				$auth_token = $auth->auth($this->app_token, $email, $password, BASE_URL.AUTH);
 				if(isset($auth_token["error"]))
 				{
