@@ -17,7 +17,7 @@
 				$curl = curl_init();
 				if(!$type)
 				{
-					curl_setopt($curl, CURLOPT_URL, $url.'?'.$post_string."&id=".rand(1,10000)); 
+					curl_setopt($curl, CURLOPT_URL, $url); 
 				}
 				else 
 					curl_setopt($curl, CURLOPT_URL, $url); 
