@@ -1,36 +1,38 @@
 <?php 
-	class test_orgs
+	require_once __DIR__."/.env.local.php";
+	class test_orgs extends \PHPUnit_Framework_TestCase
 	{
 		public $hubstaff_api;
-		public $app_token = "JDzYL7shxiaCCx0_Hta3MT6WlgYWmZ1vqQa4Y91hM00";
 		function __construct()
 		{
-			if(!class_exists('hubstaff\Client'))
-				include("../hubstaff.php");
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
+			require_once("../hubstaff.php");
+			$this->hubstaff_api = new hubstaff\Client($_ENV['APP_TOKEN']);
+			$this->hubstaff_api->set_auth_token($_ENV['AUTH_TOKEN']);
 		}		
-		public function organizations()
+		public function testOrganizations()
 		{
-			return 	json_decode(json_encode($this->hubstaff_api->organizations()), True);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('organizations/organizations.yml');
+			$this->hubstaff_api->organizations();
 		}
-		public function find_organization()
+		public function testFind_organization()
 		{
-			$orgs = $this->organizations();
-			$id = $orgs["organizations"][0]["id"];
-			return $this->hubstaff_api->find_organization($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('organizations/find_organization.yml');
+			return $this->hubstaff_api->find_organization("27572");
 			
 		}
-		public function find_org_projects()
+		public function testFind_org_projects()
 		{
-			$orgs = $this->organizations();
-			$id = $orgs["organizations"][0]["id"];
-			return $this->hubstaff_api->find_org_projects($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('organizations/find_org_projects.yml');
+			return $this->hubstaff_api->find_org_projects("27572");
 		}
-		public function find_org_members()
+		public function testFind_org_members()
 		{
-			$orgs = $this->organizations();
-			$id = $orgs["organizations"][0]["id"];
-			return $this->hubstaff_api->find_org_members($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('organizations/find_org_members.yml');
+			return $this->hubstaff_api->find_org_members("27572");
 		}
 	}
 

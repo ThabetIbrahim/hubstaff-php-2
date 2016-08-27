@@ -1,42 +1,32 @@
 <?php 
-	class test_notes
+	require_once __DIR__."/.env.local.php";
+	class test_notes extends \PHPUnit_Framework_TestCase
 	{
 		public $hubstaff_api;
-		public $app_token = "JDzYL7shxiaCCx0_Hta3MT6WlgYWmZ1vqQa4Y91hM00";
 		public $options = array();
 		function __construct()
-		{
-			include("../hubstaff.php");
-			include("users.php");
-			include("projects.php");
-			include("organizations.php");
-			
-			$users = new test_users();
-			$projects = new test_projects();
-			$orgs = new test_orgs();
-			
-			$users_data = $users->users();
-			$projects_data = $projects->projects();
-			$orgs_data = $orgs->organizations();
+		{			
+			$this->options["users"] = "61188";
+			$this->options["projects"] ="112761";
+			$this->options["organizations"] = "27572";
 
-			$options["users"] = $users_data["users"][0]["id"];
-			$options["projects"] = $projects_data["projects"][0]["id"];
-			$options["organizations"] = $orgs_data["organizations"][0]["id"];
-			
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
+			require_once("../hubstaff.php");
+			$this->hubstaff_api = new hubstaff\Client($_ENV['APP_TOKEN']);
+			$this->hubstaff_api->set_auth_token($_ENV['AUTH_TOKEN']);
 		}		
-		public function notes()
+		public function testNotes()
 		{
             $starttime = "2016-03-14";
             $stoptime = "2016-03-20";
-			return json_decode(json_encode($this->hubstaff_api->notes($starttime, $stoptime, $options, 0)), True);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('notes/notes.yml');
+			$this->hubstaff_api->notes($starttime, $stoptime, $options, 0);
 		}
-		public function find_note()
+		public function testFind_note()
 		{
-			$notes = $this->notes();
-			$id = $notes["notes"][0]["id"];
-			return $this->hubstaff_api->find_note($id);
-			
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('notes/find_note.yml');
+			return $this->hubstaff_api->find_note("0");
 		}
 	}
 

@@ -1,37 +1,40 @@
 <?php 
-ini_set("display_errors",1);
-	class test_users
+	require_once __DIR__."/.env.local.php";
+	class test_users extends \PHPUnit_Framework_TestCase
 	{
 		public $hubstaff_api;
-		public $app_token = "";
 		function __construct()
 		{
-			if(!class_exists('hubstaff\Client'))
-				include("../hubstaff.php");
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
-		}		
-		public function users()
+			require_once("../hubstaff.php");
+			$this->hubstaff_api = new hubstaff\Client($_ENV['APP_TOKEN']);
+			$this->hubstaff_api->set_auth_token($_ENV['AUTH_TOKEN']);
+		}	
+		public function testUsers()
 		{
-			return json_decode(json_encode($this->hubstaff_api->users()), True);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/users.yml');
+			$this->hubstaff_api->users();
 		}
-		public function find_user()
+		public function testFind_user()
 		{
-			$users = $this->users();
-			$id = $users["users"][0]["id"];
-			return $this->hubstaff_api->find_user($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/find_user.yml');
+			$this->hubstaff_api->find_user("61188");
 			
 		}
-		public function find_user_projects()
+		public function testFind_user_projects()
 		{
-			$users = $this->users();
-			$id = $users["users"][0]["id"];
-			return $this->hubstaff_api->find_user_projects($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/find_user_projects.yml');
+			$this->hubstaff_api->set_auth_token("5WZ1SCto37HBhH-AR1jn0kC3FXROO4b39CREMSyt_1U");
+			$this->hubstaff_api->find_user_projects("61188");
 		}
-		public function find_user_orgs()
+		public function testFind_user_orgs()
 		{
-			$users = $this->users();
-			$id = $users["users"][0]["id"];
-			return $this->hubstaff_api->find_user_orgs($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/find_user_organizations.yml');
+			$this->hubstaff_api->set_auth_token("5WZ1SCto37HBhH-AR1jn0kC3FXROO4b39CREMSyt_1U");
+			$this->hubstaff_api->find_user_orgs("27572");
 		}
 	}
 ?>
