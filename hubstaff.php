@@ -30,7 +30,7 @@
 			}
 			public function users($organization_memberships = 0, $project_memberships = 0, $offset = 0)
 			{
-				$users = new Hubstaff\Client\users;
+				$users = new Client\users;
 				return $users->getusers($this->auth_token, $this->app_token, $organization_memberships, $project_memberships, $offset, BASE_URL.USERS);
 			}
 			
