@@ -17,7 +17,7 @@
 				$curl = curl_init();
 				if(!$type)
 				{
-					curl_setopt($curl, CURLOPT_URL, $url); 
+					curl_setopt($curl, CURLOPT_URL, $url.'?'.$post_string); 
 				}
 				else 
 					curl_setopt($curl, CURLOPT_URL, $url); 
