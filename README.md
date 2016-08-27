@@ -211,5 +211,8 @@ $hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
 In order to run user tests you need to get development dependencies using composer:
 ```php
 composer install --dev
+```
+Then change the app token and the auth token in the ```.env.local.php``` file, and run
+```php
 phpunit ./users
 ```
