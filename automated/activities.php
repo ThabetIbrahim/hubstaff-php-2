@@ -1,8 +1,7 @@
 <?php 
-	require_once __DIR__."/.env.local.php";
 	class test_activities extends \PHPUnit_Framework_TestCase
 	{
-		public $hubstaff_api;
+		public $stub;
 		public $options = array();
 		function __construct()
 		{			
@@ -11,8 +10,7 @@
 			$this->options["organizations"] = "27572";
 		
 			require_once("../hubstaff.php");
-			$this->hubstaff_api = new hubstaff\Client($_ENV['APP_TOKEN']);
-			$this->hubstaff_api->set_auth_token($_ENV['AUTH_TOKEN']);
+	        $this->stub = $this->getMockBuilder('hubstaff\Client')->disableOriginalConstructor()->getMock();
 		}		
 		public function testActivities()
 		{
@@ -20,7 +18,8 @@
             $stoptime = "2016-03-20";
 			\VCR\VCR::turnOn();
 			\VCR\VCR::insertCassette('activities/activities.yml');
-			$this->hubstaff_api->activities($starttime, $stoptime, $options, 0);
+	        $this->stub->method('activities')->willReturn(json_decode('{"activities":[]}',true));	
+       		$this->assertArrayHasKey("activities", $this->stub->activities($starttime, $stoptime, $this->options, 0));
 		}
 	}	
 	

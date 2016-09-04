@@ -1,8 +1,7 @@
 <?php 
-	require_once __DIR__."/.env.local.php";
 	class test_notes extends \PHPUnit_Framework_TestCase
 	{
-		public $hubstaff_api;
+		public $stub;
 		public $options = array();
 		function __construct()
 		{			
@@ -11,22 +10,23 @@
 			$this->options["organizations"] = "27572";
 
 			require_once("../hubstaff.php");
-			$this->hubstaff_api = new hubstaff\Client($_ENV['APP_TOKEN']);
-			$this->hubstaff_api->set_auth_token($_ENV['AUTH_TOKEN']);
+	        $this->stub = $this->getMockBuilder('hubstaff\Client')->disableOriginalConstructor()->getMock();
 		}		
 		public function testNotes()
 		{
-            $starttime = "2016-03-14";
-            $stoptime = "2016-03-20";
+            $starttime = "2016-05-20";
+            $stoptime = "2016-05-23";
 			\VCR\VCR::turnOn();
 			\VCR\VCR::insertCassette('notes/notes.yml');
-			$this->hubstaff_api->notes($starttime, $stoptime, $options, 0);
+	        $this->stub->method('notes')->willReturn(json_decode('{"notes":[{"id":716530,"description":"Practice Notes","time_slot":"2016-05-23T22:20:00Z","recorded_at":"2016-06-04T19:08:22Z","user_id":61188,"project_id":112761}]}',true));	
+       		$this->assertArrayHasKey("notes", $this->stub->notes($starttime, $stoptime, $this->options, 0));
 		}
 		public function testFind_note()
-		{
+		{ 
 			\VCR\VCR::turnOn();
 			\VCR\VCR::insertCassette('notes/find_note.yml');
-			return $this->hubstaff_api->find_note("0");
+	        $this->stub->method('find_note')->willReturn(json_decode('{"note":{"id":716530,"description":"Practice Notes","time_slot":"2016-05-23T22:20:00Z","recorded_at":"2016-06-04T19:08:22Z","user_id":61188,"project_id":112761}}',true));	
+       		$this->assertArrayHasKey("note", $this->stub->find_note(716530));
 		}
 	}
 
