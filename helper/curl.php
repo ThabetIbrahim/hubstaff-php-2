@@ -29,11 +29,11 @@
 				}
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); 
 				$result = curl_exec($curl);
-				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				$httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 				if($httpCode != 200 && $httpCode != 201 ) {
 				  if( $httpCode == "400" || $httpCode == "401" || $httpCode == "403" || $httpCode == "404" || $httpCode == "406" || $httpCode == "409" || $httpCode == "429" || $httpCode == "500" || $httpCode == "502" || $httpCode == "403" )
 				  {
-				 	 $error = array("error" => curl_error($ch));
+				 	 $error = array("error" => curl_error($curl));
 				  }else
 				  {
 					 $error = array("error" => "Unexpected Error from hubstaff-php");
