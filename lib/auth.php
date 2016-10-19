@@ -1,7 +1,6 @@
 <?php 
 	namespace Hubstaff\Client
 	{
-		require_once $_SESSION['root']."helper/curl.php";
 		class userauth
 		{
 	   		public function auth($app_token, $email, $password,$url)
