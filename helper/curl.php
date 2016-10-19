@@ -33,10 +33,10 @@
 				if($httpCode != 200 && $httpCode != 201 ) {
 				  if( $httpCode == "400" || $httpCode == "401" || $httpCode == "403" || $httpCode == "404" || $httpCode == "406" || $httpCode == "409" || $httpCode == "429" || $httpCode == "500" || $httpCode == "502" || $httpCode == "403" )
 				  {
-				 	 $error = array($error["error"] => curl_error($ch));
+				 	 $error = array("error" => curl_error($ch));
 				  }else
 				  {
-					 $error = array($error["error"] => "Unexpected Error from hubstaff-php");
+					 $error = array("error" => "Unexpected Error from hubstaff-php");
 				  }
 				  return json_encode($error);
 				}
