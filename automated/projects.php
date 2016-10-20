@@ -1,30 +1,33 @@
 <?php 
-	class test_projects
+	class test_projects extends \PHPUnit_Framework_TestCase
 	{
-		public $hubstaff_api;
-		public $app_token = "JDzYL7shxiaCCx0_Hta3MT6WlgYWmZ1vqQa4Y91hM00";
+		public $stub;
 		function __construct()
 		{
-			if(!class_exists('hubstaff\Client'))
-				include("../hubstaff.php");
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
-		}		
-		public function projects()
+			require_once("../hubstaff.php");
+	        $this->stub = $this->getMockBuilder('hubstaff\Client')->disableOriginalConstructor()->getMock();
+		}	
+		public function testProjects()
 		{
-			return json_decode(json_encode($this->hubstaff_api->projects()), True);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('projects/projects.yml');
+	        $this->stub->method('projects')->willReturn(json_decode('{ "projects": [ { "id": 112761, "name": "Build Ruby Gem", "last_activity": "2016-05-24T01:25:21Z", "status": "Active", "description": null }, { "id": 120320, "name": "Hubstaff API tutorial", "last_activity": null, "status": "Active", "description": null } ] }',true));	
+       		$this->assertArrayHasKey("projects", $this->stub->projects());
 		}
-		public function find_project()
+		public function testFind_project()
 		{
-			$projects = $this->projects();
-			$id = $projects["projects"][0]["id"];
-			return $this->hubstaff_api->find_project($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('projects/find_project.yml');
+	        $this->stub->method('find_project')->willReturn(json_decode('{ "project": { "id": 120320, "name": "Hubstaff API tutorial", "last_activity": null, "status": "Active", "description": null } }',true));	
+       		$this->assertArrayHasKey("project", $this->stub->find_project(120320));
 			
 		}
-		public function find_project_members()
+		public function testFind_project_members()
 		{
-			$projects = $this->projects();
-			$id = $projects["projects"][0]["id"];
-			return $this->hubstaff_api->find_project_members($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('projects/find_project_members.yml');
+	        $this->stub->method('find_project_members')->willReturn(json_decode('{ "users": [ { "id": 61188, "name": "Raymond Cudjoe", "last_activity": "2016-05-24T01:25:21Z", "email": "rkcudjoe@hookengine.com", "pay_rate": "No rate set" } ] }',true));	
+       		$this->assertArrayHasKey("users", $this->stub->find_project_members(120320));
 		}
 	}
 

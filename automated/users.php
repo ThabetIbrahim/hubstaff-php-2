@@ -1,37 +1,41 @@
 <?php 
-ini_set("display_errors",1);
-	class test_users
+	class test_users extends \PHPUnit_Framework_TestCase
 	{
-		public $hubstaff_api;
-		public $app_token = "";
+		public $stub;
 		function __construct()
 		{
-			if(!class_exists('hubstaff\Client'))
-				include("../hubstaff.php");
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
-		}		
-		public function users()
+			require_once("../hubstaff.php");
+	        $this->stub = $this->getMockBuilder('hubstaff\Client')->disableOriginalConstructor()->getMock();
+		}	
+		
+		public function testUsers()
 		{
-			return json_decode(json_encode($this->hubstaff_api->users()), True);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/users.yml');
+	        $this->stub->method('users')->willReturn(json_decode('{"users": [ {"id": 61188, "name": "Raymond Cudjoe","last_activity": "2016-05-24T01:25:21Z","email": "rkcudjoe@hookengine.com"}]}',true));	
+       		$this->assertArrayHasKey("users", $this->stub->users());
 		}
-		public function find_user()
+		public function testFind_user()
 		{
-			$users = $this->users();
-			$id = $users["users"][0]["id"];
-			return $this->hubstaff_api->find_user($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/find_user.yml');
+	        $this->stub->method('find_user')->willReturn(json_decode('{"user": {"id": 61188,"name": "Raymond Cudjoe","last_activity": "2016-05-24T01:25:21Z","email": "rkcudjoe@hookengine.com"}}',true));	
+       		$this->assertArrayHasKey("user", $this->stub->find_user(61188));
 			
 		}
-		public function find_user_projects()
+		public function testFind_user_projects()
 		{
-			$users = $this->users();
-			$id = $users["users"][0]["id"];
-			return $this->hubstaff_api->find_user_projects($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/find_user_projects.yml');
+	        $this->stub->method('find_user_projects')->willReturn(json_decode('{ "projects": [ { "id": 112761, "name": "Build Ruby Gem", "last_activity": "2016-05-24T01:25:21Z", "status": "Active", "description": null }, { "id": 120320, "name": "Hubstaff API tutorial", "last_activity": null, "status": "Active", "description": null } ] }',true));	
+       		$this->assertArrayHasKey("projects", $this->stub->find_user_projects(61188));
 		}
-		public function find_user_orgs()
+		public function testFind_user_orgs()
 		{
-			$users = $this->users();
-			$id = $users["users"][0]["id"];
-			return $this->hubstaff_api->find_user_orgs($id);
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('users/find_user_organizations.yml');
+	        $this->stub->method('find_user_orgs')->willReturn(json_decode('{ "organizations": [ { "id": 27572, "name": "Hook Engine", "last_activity": "2016-05-24T01:25:21Z" } ] } ',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->find_user_orgs(61188));
 		}
 	}
 ?>

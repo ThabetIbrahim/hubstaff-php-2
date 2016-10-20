@@ -1,42 +1,32 @@
 <?php 
-	class test_notes
+	class test_notes extends \PHPUnit_Framework_TestCase
 	{
-		public $hubstaff_api;
-		public $app_token = "JDzYL7shxiaCCx0_Hta3MT6WlgYWmZ1vqQa4Y91hM00";
+		public $stub;
 		public $options = array();
 		function __construct()
-		{
-			include("../hubstaff.php");
-			include("users.php");
-			include("projects.php");
-			include("organizations.php");
-			
-			$users = new test_users();
-			$projects = new test_projects();
-			$orgs = new test_orgs();
-			
-			$users_data = $users->users();
-			$projects_data = $projects->projects();
-			$orgs_data = $orgs->organizations();
+		{			
+			$this->options["users"] = "61188";
+			$this->options["projects"] ="112761";
+			$this->options["organizations"] = "27572";
 
-			$options["users"] = $users_data["users"][0]["id"];
-			$options["projects"] = $projects_data["projects"][0]["id"];
-			$options["organizations"] = $orgs_data["organizations"][0]["id"];
-			
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
+			require_once("../hubstaff.php");
+	        $this->stub = $this->getMockBuilder('hubstaff\Client')->disableOriginalConstructor()->getMock();
 		}		
-		public function notes()
+		public function testNotes()
 		{
-            $starttime = "2016-03-14";
-            $stoptime = "2016-03-20";
-			return json_decode(json_encode($this->hubstaff_api->notes($starttime, $stoptime, $options, 0)), True);
+            $starttime = "2016-05-20";
+            $stoptime = "2016-05-23";
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('notes/notes.yml');
+	        $this->stub->method('notes')->willReturn(json_decode('{"notes":[{"id":716530,"description":"Practice Notes","time_slot":"2016-05-23T22:20:00Z","recorded_at":"2016-06-04T19:08:22Z","user_id":61188,"project_id":112761}]}',true));	
+       		$this->assertArrayHasKey("notes", $this->stub->notes($starttime, $stoptime, $this->options, 0));
 		}
-		public function find_note()
-		{
-			$notes = $this->notes();
-			$id = $notes["notes"][0]["id"];
-			return $this->hubstaff_api->find_note($id);
-			
+		public function testFind_note()
+		{ 
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('notes/find_note.yml');
+	        $this->stub->method('find_note')->willReturn(json_decode('{"note":{"id":716530,"description":"Practice Notes","time_slot":"2016-05-23T22:20:00Z","recorded_at":"2016-06-04T19:08:22Z","user_id":61188,"project_id":112761}}',true));	
+       		$this->assertArrayHasKey("note", $this->stub->find_note(716530));
 		}
 	}
 

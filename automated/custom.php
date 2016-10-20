@@ -1,59 +1,64 @@
 <?php 
-	class test_activities
+	class test_custom extends \PHPUnit_Framework_TestCase
 	{
-		public $hubstaff_api;
-		public $app_token = "JDzYL7shxiaCCx0_Hta3MT6WlgYWmZ1vqQa4Y91hM00";
+		public $stub;
 		public $options = array();
-        public $start_date = "2016-05-01";
-        public $end_date = "2016-05-07";
+        public $start_date = "2016-05-23";
+        public $end_date = "2016-05-25";
 		function __construct()
 		{
-			include("../hubstaff.php");
-			include("users.php");
-			include("projects.php");
-			include("organizations.php");
-			
-			$users = new test_users();
-			$projects = new test_projects();
-			$orgs = new test_orgs();
-			
-			$users_data = $users->users();
-			$projects_data = $projects->projects();
-			$orgs_data = $orgs->organizations();
-
-			$options["users"] = $users_data["users"][0]["id"];
-			$options["projects"] = $projects_data["projects"][0]["id"];
-			$options["organizations"] = $orgs_data["organizations"][0]["id"];
-            $options["show_tasks"] = "1";
-            $options["show_notes"] = "1";
-            $options["show_activity"] = "1";
-            $options["include_archived"] = "1";
-			
-			$this->hubstaff_api = new hubstaff\Client($this->app_token);
+			$this->options["users"] = "61188";
+			$this->options["projects"] ="112761";
+			$this->options["organizations"] = "27572";
+            $this->options["show_tasks"] = "1";
+            $this->options["show_notes"] = "1";
+            $this->options["show_activity"] = "1";
+            $this->options["include_archived"] = "1";
+		
+			require_once("../hubstaff.php");
+	        $this->stub = $this->getMockBuilder('hubstaff\Client')->disableOriginalConstructor()->getMock();
 		}		
-		public function custom_date_team()
+		public function testCustom_date_team()
 		{
-			return ($this->hubstaff_api->custom_date_team($start_date, $end_date, $options));
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('custom/custom_date_team.yml');
+	        $this->stub->method('custom_date_team')->willReturn(json_decode('{"organizations":[{"id":27572,"name":"Hook Engine","duration":7874,"dates":[{"date":"2016-05-23","duration":7874,"users":[{"id":61188,"name":"Raymond Cudjoe","duration":7874,"projects":[{"id":112761,"name":"Build Ruby Gem","duration":7874}]}]}]}]}',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->custom_date_team($this->start_date, $this->end_date, $this->options));
 		}
-		public function custom_date_my()
+		public function testCustom_date_my()
 		{
-			return ($this->hubstaff_api->custom_date_my($start_date, $end_date, $options));
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('custom/custom_date_my.yml');
+	        $this->stub->method('custom_date_my')->willReturn(json_decode('{"organizations":[{"id":27572,"name":"Hook Engine","duration":7874,"dates":[{"date":"2016-05-23","duration":7874,"users":[{"id":61188,"name":"Raymond Cudjoe","duration":7874,"projects":[{"id":112761,"name":"Build Ruby Gem","duration":7874}]}]}]}]}',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->custom_date_my($this->start_date, $this->end_date, $this->options));
 		}
-		public function custom_member_team()
+		public function testCustom_member_team()
 		{
-			return ($this->hubstaff_api->custom_member_team($start_date, $end_date, $options));
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('custom/custom_member_team.yml');
+	        $this->stub->method('custom_member_team')->willReturn(json_decode('{"organizations":[{"id":27572,"name":"Hook Engine","duration":7874,"dates":[{"date":"2016-05-23","duration":7874,"users":[{"id":61188,"name":"Raymond Cudjoe","duration":7874,"projects":[{"id":112761,"name":"Build Ruby Gem","duration":7874}]}]}]}]}',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->custom_member_team($this->start_date, $this->end_date, $this->options));
 		}
-		public function custom_member_my()
+		public function testCustom_member_my()
 		{
-			return ($this->hubstaff_api->custom_member_my($start_date, $end_date, $options));
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('custom/custom_member_my.yml');
+	        $this->stub->method('custom_member_my')->willReturn(json_decode('{"organizations":[{"id":27572,"name":"Hook Engine","duration":7874,"dates":[{"date":"2016-05-23","duration":7874,"users":[{"id":61188,"name":"Raymond Cudjoe","duration":7874,"projects":[{"id":112761,"name":"Build Ruby Gem","duration":7874}]}]}]}]}',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->custom_member_my($this->start_date, $this->end_date, $this->options));
 		}
-		public function custom_project_team()
+		public function testCustom_project_team()
 		{
-			return ($this->hubstaff_api->custom_project_team($start_date, $end_date, $options));
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('custom/custom_project_team.yml');
+	        $this->stub->method('custom_project_team')->willReturn(json_decode('{"organizations":[{"id":27572,"name":"Hook Engine","duration":7874,"dates":[{"date":"2016-05-23","duration":7874,"users":[{"id":61188,"name":"Raymond Cudjoe","duration":7874,"projects":[{"id":112761,"name":"Build Ruby Gem","duration":7874}]}]}]}]}',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->custom_project_team($this->start_date, $this->end_date, $this->options));
 		}
-		public function custom_project_my()
+		public function testCustom_project_my()
 		{
-			return ($this->hubstaff_api->custom_project_my($start_date, $end_date, $options));
+			\VCR\VCR::turnOn();
+			\VCR\VCR::insertCassette('custom/custom_project_my.yml');
+	        $this->stub->method('custom_project_my')->willReturn(json_decode('{"organizations":[{"id":27572,"name":"Hook Engine","duration":7874,"dates":[{"date":"2016-05-23","duration":7874,"users":[{"id":61188,"name":"Raymond Cudjoe","duration":7874,"projects":[{"id":112761,"name":"Build Ruby Gem","duration":7874}]}]}]}]}',true));	
+       		$this->assertArrayHasKey("organizations", $this->stub->custom_project_my($this->start_date, $this->end_date, $this->options));
 		}
 	}
 
