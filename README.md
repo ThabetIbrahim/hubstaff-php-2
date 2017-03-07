@@ -207,12 +207,15 @@ $hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
 ```
 
 ### Run tests
-
+First using terminal navigate to automated directory using: 
+```php
+cd automated;
+``` 
 In order to run user tests you need to get development dependencies using composer:
 ```php
 composer install --dev
 ``` 
-and run
+To test users class run:
 ```php
 phpunit ./users
 ```
