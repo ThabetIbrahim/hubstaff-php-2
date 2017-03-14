@@ -205,3 +205,14 @@ $hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
   ]
 }
 ```
+
+### Run tests
+
+In order to run user tests you need to get development dependencies using composer:
+```php
+composer install --dev
+``` 
+and run
+```php
+phpunit ./users
+```

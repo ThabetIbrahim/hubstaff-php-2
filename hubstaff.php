@@ -9,34 +9,28 @@
 			public $auth_token = "";
 			function __construct($app_token) {
 				$this->app_token = $app_token;
-				$this->auth_token = $this->get_auth_token();
 			}	
 			public function get_auth_token()
 			{
-				$auth_token_file = fopen(ROOT_FOLDER."store/auth.txt","r");
-				return fread($auth_token_file,filesize(ROOT_FOLDER."store/auth.txt"));						
+				return $this->auth_token;
+			}
+			public function set_auth_token($auth_token)
+			{
+				$this->auth_token = $auth_token;
 			}
 			public function auth($email, $password)
 			{
 				$auth = new Client\userauth;
-				if(!is_dir(ROOT_FOLDER."store"))
-				{
-					$auth_token["error"] = "Please create the store directory with 777 permission";
-					return $auth_token;
-				}
-				$auth_token = $auth->auth($_SESSION['App-Token'], $email, $password, BASE_URL.AUTH);
+				$auth_token = $auth->auth($this->app_token, $email, $password, BASE_URL.AUTH);
 				if(isset($auth_token["error"]))
 				{
 					return $auth_token["error"];
 				}
-				$_SESSION['Auth-Token'] = $auth_token["auth_token"];
-				$auth_token_file = fopen(ROOT_FOLDER."store/auth.txt","w");
-				fwrite($auth_token_file,$auth_token["auth_token"]);
-				return 	$auth_token;
+				$this->set_auth_token($auth_token["auth_token"]);
 			}
 			public function users($organization_memberships = 0, $project_memberships = 0, $offset = 0)
 			{
-				$users = new Hubstaff\Client\users;
+				$users = new Client\users;
 				return $users->getusers($this->auth_token, $this->app_token, $organization_memberships, $project_memberships, $offset, BASE_URL.USERS);
 			}
 			
