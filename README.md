@@ -75,7 +75,10 @@ $auth_token = $hubstaff->get_auth_token();
 ### You can list all users for a specific account, and get the details about the organization, and the projects they've worked on.
 
 ```php
-$hubstaff->users(1,1,0);
+$org_member = 1;
+$project_member = 1;
+$offset = 0;
+$hubstaff->users($org_member, $project_member, $offset);
 
 //=>
 {
@@ -115,7 +118,8 @@ $hubstaff->users(1,1,0);
 ### You can find specific users by their``user_id``.
 
 ```php
-$hubstaff->find_user(61188);
+$user_id = 61188;
+$hubstaff->find_user($user_id);
 
 //=>
 {
@@ -158,7 +162,11 @@ $hubstaff->projects();
 ### Retrieve screenshots for a specific project, within a specific timeframe.
 
 ```php
-$hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
+$start_date = "2016-05-22";
+$end_date = "2016-05-24";
+$offset = 0;
+$options = array("projects"=>"112761");
+$hubstaff->screenshots($start_date, $end_date, $offset, $options);
 
 //=>
 {
@@ -207,12 +215,15 @@ $hubstaff->screenshots("2016-05-22", "2016-05-24", array("projects"=>"112761"));
 ```
 
 ### Run tests
-
-In order to run user tests you need to get development dependencies using composer:
+In order to run tests. First using terminal navigate to the tests folder.
+```php
+cd tests
+``` 
+Then install the development dependencies using composer:
 ```php
 composer install --dev
 ``` 
-and run
+and finally run
 ```php
 phpunit ./users
 ```
